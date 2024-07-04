@@ -12,8 +12,7 @@ class UserService(
 ) {
 
     fun save(user: User): User {
-        val hashedPassword = passwordEncoder.encode(user.password)
-        val userWithHashedPassword = user.copy(password = hashedPassword)
-        return userRepository.save(userWithHashedPassword)
-    }
+        // 여기서 다시 비밀번호를 해싱하지 않습니다.
+        return userRepository.save(user)
+   }
 }
