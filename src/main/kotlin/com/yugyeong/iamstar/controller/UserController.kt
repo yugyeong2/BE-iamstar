@@ -40,6 +40,7 @@ class UserController(
         logger.info("사용자가 회원가입한 비밀번호: ${signupRequest.password}")
         logger.info("저장된 해시된 비밀번호: $encodedPassword")
 
+        return mapOf("username" to user.username) // username 리턴
     }
 
     @PostMapping("/signin")
