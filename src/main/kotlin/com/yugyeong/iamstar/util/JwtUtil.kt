@@ -13,18 +13,22 @@ class JwtUtil {
     private lateinit var secretKey: String
 
     fun generateToken(username: String): String {
-        return Jwts.builder()
+        val token = Jwts.builder()
             .setSubject(username)
             .setIssuedAt(Date())
             .setExpiration(Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) // 10시간 유효
             .signWith(SignatureAlgorithm.HS256, secretKey)
             .compact()
+        println("Generated Token: $token") // 토큰 생성 로깅
+        return token
     }
 
     fun validateToken(token: String, username: String): Boolean {
         val claims = extractAllClaims(token)
         val tokenUsername = claims.subject
-        return (username == tokenUsername && !isTokenExpired(token))
+        val isValid = (username == tokenUsername && !isTokenExpired(token))
+        println("Token Validation: $isValid") // 토큰 유효성 검사 로깅
+        return isValid
     }
 
     internal fun extractAllClaims(token: String): Claims {

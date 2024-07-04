@@ -30,6 +30,7 @@ class JwtRequestFilter(
 
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             jwt = authorizationHeader.substring(7)
+            println("Extracted JWT: $jwt")
             username = jwtUtil.extractAllClaims(jwt).subject
         }
 
