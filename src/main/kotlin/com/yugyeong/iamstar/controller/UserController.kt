@@ -33,7 +33,7 @@ class UserController(
             email = signupRequest.email,
             password = encodedPassword,
             username = signupRequest.username,
-            fullName = signupRequest.fullName
+            fullName = signupRequest.fullName,
         )
         userService.save(user)
         logger.info("사용자 가입 성공: ${signupRequest.email}")
@@ -44,7 +44,7 @@ class UserController(
     }
 
     @PostMapping("/signin")
-    fun signin(@RequestBody signInRequest: SignInRequest): String {
+    fun signin(@RequestBody signInRequest: SignInRequest): Map<String, String> {
         try {
             val userDetails: UserDetails = userDetailsService.loadUserByUsername(signInRequest.email)
             logger.info("로그인 시 입력한 이메일: ${signInRequest.email}")
@@ -63,7 +63,7 @@ class UserController(
 
                 val token = jwtUtil.generateToken(userDetails.username)
                 logger.info("JWT 토큰 생성 성공: ${signInRequest.email}")
-                return token
+                return mapOf("token" to token) // 토큰을 map으로 반환하여 클라이언트에서 `response.data.token`으로 접근할 수 있도록 한다.
             } else {
                 logger.error("비밀번호 불일치: ${signInRequest.email}")
                 throw RuntimeException("비밀번호가 일치하지 않습니다.")
