@@ -36,6 +36,8 @@ dependencies {
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 	implementation("javax.xml.bind:jaxb-api:2.3.1")
 	implementation("org.glassfish.jaxb:jaxb-runtime:2.3.1")
+	implementation("com.amazonaws:aws-java-sdk-s3:1.12.300")
+	implementation("org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	runtimeOnly("org.postgresql:postgresql")
 	annotationProcessor("org.projectlombok:lombok")
