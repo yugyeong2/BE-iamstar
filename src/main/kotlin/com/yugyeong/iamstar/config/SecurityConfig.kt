@@ -33,6 +33,7 @@ class SecurityConfig(
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
         http
             .csrf { it.disable() }
+            .cors { } // CORS 설정이 WebConfig에서 처리되므로 여기서는 빈 블록만 추가
             .authorizeHttpRequests { authorize ->
                 authorize.requestMatchers("/signin", "/signup").permitAll() // 로그인 및 회원가입 경로는 인증 없이 접근 가능
                 authorize.anyRequest().authenticated() // 그 외 모든 요청은 인증 필요
