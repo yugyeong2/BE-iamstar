@@ -15,9 +15,12 @@ class PostService @Autowired constructor(
     private val postRepository: PostRepository,
     private val userRepository: UserRepository
 ) {
-    fun createPost(userId: String, postRequest: PostRequest): Post {
+    fun createPost(email: String, postRequest: PostRequest): Post {
+        val user = userRepository.findByEmail(email)
+            ?: throw RuntimeException("User not found with email: $email")
+
         val post = Post(
-            userId = userId,
+            userId = user.id!!,
             content = postRequest.content,
             postUrl = postRequest.postUrl,
             timestamp = LocalDateTime.now()
@@ -28,7 +31,7 @@ class PostService @Autowired constructor(
 
     fun getAllPosts(): List<PostResponse> {
         return postRepository.findAllByOrderByTimestampDesc().map { post ->
-            val user = userRepository.findById(post.userId).orElseThrow { RuntimeException("User not found") }
+            val user = userRepository.findById(post.userId).orElseThrow { RuntimeException("User with ID ${post.userId} not found") }
             PostResponse(
                 id = post.id!!,
                 username = user.username,
