@@ -20,8 +20,8 @@ class PostController @Autowired constructor(
     @PostMapping
     fun createPost(@RequestBody postRequest: PostRequest): ResponseEntity<Post> {
         val userDetails = SecurityContextHolder.getContext().authentication.principal as UserDetails
-        val userId = userDetails.username
-        val savedPost = postService.createPost(userId, postRequest)
+        val email = userDetails.username
+        val savedPost = postService.createPost(email, postRequest)
         return ResponseEntity.ok(savedPost)
     }
 
