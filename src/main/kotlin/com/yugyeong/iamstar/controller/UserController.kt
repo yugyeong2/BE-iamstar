@@ -33,7 +33,7 @@ class UserController(
             email = signupRequest.email,
             password = encodedPassword,
             username = signupRequest.username,
-            fullName = signupRequest.fullName,
+            fullName = signupRequest.fullName
         )
         userService.save(user)
         logger.info("사용자 가입 성공: ${signupRequest.email}")
