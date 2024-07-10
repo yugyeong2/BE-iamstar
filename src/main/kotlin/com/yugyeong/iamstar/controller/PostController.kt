@@ -43,6 +43,14 @@ class PostController @Autowired constructor(
         postService.unlikePost(postId, userId)
     }
 
+    @GetMapping("/{postId}/isLiked")
+    fun isLiked(@PathVariable postId: String): Map<String, Boolean> {
+        val userDetails = SecurityContextHolder.getContext().authentication.principal as UserDetails
+        val userId = userDetails.id
+        val isLiked = postService.isLiked(postId, userId)
+        return mapOf("isLiked" to isLiked)
+    }
+
     @PostMapping("/{postId}/comment")
     fun addComment(@PathVariable postId: String, @RequestBody comment: Comment): ResponseEntity<Post> {
         val savedPost = postService.addComment(postId, comment)

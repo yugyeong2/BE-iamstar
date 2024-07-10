@@ -60,6 +60,11 @@ class PostService @Autowired constructor(
         }
     }
 
+    fun isLiked(postId: String, userId: String): Boolean {
+        val post = postRepository.findById(postId).orElseThrow { RuntimeException("Post not found") }
+        return post.likes.contains(userId)
+    }
+
     fun addComment(postId: String, comment: Comment): Post {
         val post = postRepository.findById(postId).orElseThrow { RuntimeException("Post not found") }
         val user = userRepository.findById(comment.userId).orElseThrow { RuntimeException("User not found") }
