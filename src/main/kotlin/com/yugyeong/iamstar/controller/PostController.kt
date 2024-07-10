@@ -29,6 +29,13 @@ class PostController @Autowired constructor(
         return postService.getAllPosts()
     }
 
+    @PostMapping("/{postId}/like")
+    fun likePost(@PathVariable postId: String) {
+        val userDetails = SecurityContextHolder.getContext().authentication.principal as UserDetails
+        val userId = userDetails.id
+        postService.likePost(postId, userId)
+    }
+
     @PostMapping("/{postId}/comment")
     fun addComment(@PathVariable postId: String, @RequestBody comment: Comment): ResponseEntity<Post> {
         val savedPost = postService.addComment(postId, comment)
