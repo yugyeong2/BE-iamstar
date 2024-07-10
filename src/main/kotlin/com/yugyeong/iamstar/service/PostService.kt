@@ -52,6 +52,14 @@ class PostService @Autowired constructor(
         }
     }
 
+    fun unlikePost(postId: String, userId: String) {
+        val post = postRepository.findById(postId).orElseThrow { RuntimeException("Post not found") }
+        if (post.likes.contains(userId)) {
+            post.likes.remove(userId)
+            postRepository.save(post)
+        }
+    }
+
     fun addComment(postId: String, comment: Comment): Post {
         val post = postRepository.findById(postId).orElseThrow { RuntimeException("Post not found") }
         val user = userRepository.findById(comment.userId).orElseThrow { RuntimeException("User not found") }
