@@ -5,10 +5,10 @@ import com.yugyeong.iamstar.dto.PostResponse
 import com.yugyeong.iamstar.model.Comment
 import com.yugyeong.iamstar.model.Post
 import com.yugyeong.iamstar.service.PostService
+import com.yugyeong.iamstar.service.UserDetails
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.context.SecurityContextHolder
-import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -18,11 +18,10 @@ class PostController @Autowired constructor(
 ) {
 
     @PostMapping
-    fun createPost(@RequestBody postRequest: PostRequest): ResponseEntity<Post> {
+    fun createPost(@RequestBody postRequest: PostRequest) {
         val userDetails = SecurityContextHolder.getContext().authentication.principal as UserDetails
-        val email = userDetails.username
-        val savedPost = postService.createPost(email, postRequest)
-        return ResponseEntity.ok(savedPost)
+        val userId = userDetails.id
+        postService.createPost(userId, postRequest)
     }
 
     @GetMapping

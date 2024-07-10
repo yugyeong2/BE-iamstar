@@ -15,12 +15,10 @@ class PostService @Autowired constructor(
     private val postRepository: PostRepository,
     private val userRepository: UserRepository
 ) {
-    fun createPost(email: String, postRequest: PostRequest): Post {
-        val user = userRepository.findByEmail(email)
-            ?: throw RuntimeException("User not found with email: $email")
 
+    fun createPost(userId: String, postRequest: PostRequest): Post {
         val post = Post(
-            userId = user.id!!,
+            userId = userId,
             content = postRequest.content,
             postUrl = postRequest.postUrl,
             timestamp = LocalDateTime.now()
