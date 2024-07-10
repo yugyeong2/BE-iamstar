@@ -3,7 +3,7 @@ package com.yugyeong.iamstar.model
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
 
-const val DEFAULT_PROFILE_IMAGE_URL = "https://iamstar.s3.ap-northeast-2.amazonaws.com/profiles/default_profile.png"
+const val DEFAULT_PROFILE_IMAGE_URL = "https://iamstar.s3.ap-northeast-2.amazonaws.com/profiles/default_profile.png\n"
 
 @Document(collection = "user")
 data class User(

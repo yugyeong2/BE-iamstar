@@ -15,11 +15,9 @@ class UserDetailsService(
         val user = userRepository.findByEmail(email)
             ?: throw UsernameNotFoundException("User not found with email: $email")
 
-        return UserDetails(
-            id = user.id!!,
-            email = user.email,
-            password = user.password,
-            authorities = emptyList()
-        )
+        return org.springframework.security.core.userdetails.User.withUsername(user.email)
+            .password(user.password)
+            .authorities(emptyList())
+            .build()
     }
 }

@@ -5,10 +5,10 @@ import com.yugyeong.iamstar.dto.PostResponse
 import com.yugyeong.iamstar.model.Comment
 import com.yugyeong.iamstar.model.Post
 import com.yugyeong.iamstar.service.PostService
-import com.yugyeong.iamstar.service.UserDetails
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -18,37 +18,16 @@ class PostController @Autowired constructor(
 ) {
 
     @PostMapping
-    fun createPost(@RequestBody postRequest: PostRequest) {
+    fun createPost(@RequestBody postRequest: PostRequest): ResponseEntity<Post> {
         val userDetails = SecurityContextHolder.getContext().authentication.principal as UserDetails
-        val userId = userDetails.id
-        postService.createPost(userId, postRequest)
+        val userId = userDetails.username
+        val savedPost = postService.createPost(userId, postRequest)
+        return ResponseEntity.ok(savedPost)
     }
 
     @GetMapping
     fun getAllPosts(): List<PostResponse> {
         return postService.getAllPosts()
-    }
-
-    @PostMapping("/{postId}/like")
-    fun likePost(@PathVariable postId: String) {
-        val userDetails = SecurityContextHolder.getContext().authentication.principal as UserDetails
-        val userId = userDetails.id
-        postService.likePost(postId, userId)
-    }
-
-    @PostMapping("/{postId}/unlike")
-    fun unlikePost(@PathVariable postId: String) {
-        val userDetails = SecurityContextHolder.getContext().authentication.principal as UserDetails
-        val userId = userDetails.id
-        postService.unlikePost(postId, userId)
-    }
-
-    @GetMapping("/{postId}/isLiked")
-    fun isLiked(@PathVariable postId: String): Map<String, Boolean> {
-        val userDetails = SecurityContextHolder.getContext().authentication.principal as UserDetails
-        val userId = userDetails.id
-        val isLiked = postService.isLiked(postId, userId)
-        return mapOf("isLiked" to isLiked)
     }
 
     @PostMapping("/{postId}/comment")
