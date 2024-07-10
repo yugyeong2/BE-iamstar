@@ -31,13 +31,13 @@ class PostService @Autowired constructor(
         return postRepository.findAllByOrderByTimestampDesc().map { post ->
             val user = userRepository.findById(post.userId).orElseThrow { RuntimeException("User with ID ${post.userId} not found") }
             PostResponse(
-                id = post.id!!,
+                id = post.id!!,  // null이 아님을 보장
                 username = user.username,
                 fullName = user.fullName,
                 profileUrl = user.profileUrl,
                 content = post.content,
                 postUrl = post.postUrl,
-                likes = post.likes,
+                likes = post.likes.size, // 게시글을 좋아요한 사용자 수를 반환
                 comments = post.comments,
                 timestamp = post.timestamp
             )
