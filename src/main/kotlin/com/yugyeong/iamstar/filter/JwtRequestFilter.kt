@@ -1,5 +1,6 @@
 package com.yugyeong.iamstar.filter
 
+import com.yugyeong.iamstar.service.CustomUserDetails
 import com.yugyeong.iamstar.util.JwtUtil
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
@@ -25,18 +26,18 @@ class JwtRequestFilter(
         filterChain: FilterChain
     ) {
         val authorizationHeader = request.getHeader("Authorization")
-        var username: String? = null
+        var email: String? = null
         var jwt: String? = null
 
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             jwt = authorizationHeader.substring(7)
             println("Extracted JWT: $jwt")
-            username = jwtUtil.extractAllClaims(jwt).subject
+            email = jwtUtil.extractAllClaims(jwt).subject
         }
 
-        if (username != null && SecurityContextHolder.getContext().authentication == null) {
-            val userDetails = this.userDetailsService.loadUserByUsername(username)
-            if (jwtUtil.validateToken(jwt!!, userDetails.username)) {
+        if (email != null && SecurityContextHolder.getContext().authentication == null) {
+            val userDetails = this.userDetailsService.loadUserByUsername(email) as CustomUserDetails
+            if (jwtUtil.validateToken(jwt!!, userDetails.getEmail())) {
                 val usernamePasswordAuthenticationToken = UsernamePasswordAuthenticationToken(
                     userDetails, null, userDetails.authorities
                 )

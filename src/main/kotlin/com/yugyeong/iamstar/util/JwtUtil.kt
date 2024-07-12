@@ -12,9 +12,9 @@ class JwtUtil {
     @Value("\${jwt.secret}")
     private lateinit var secretKey: String
 
-    fun generateToken(username: String): String {
+    fun generateToken(email: String): String {
         val token = Jwts.builder()
-            .setSubject(username)
+            .setSubject(email)
             .setIssuedAt(Date())
             .setExpiration(Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) // 10시간 유효
             .signWith(SignatureAlgorithm.HS256, secretKey)
@@ -23,10 +23,10 @@ class JwtUtil {
         return token
     }
 
-    fun validateToken(token: String, username: String): Boolean {
+    fun validateToken(token: String, email: String): Boolean {
         val claims = extractAllClaims(token)
         val tokenUsername = claims.subject
-        val isValid = (username == tokenUsername && !isTokenExpired(token))
+        val isValid = (email == tokenUsername && !isTokenExpired(token))
         println("Token Validation: $isValid") // 토큰 유효성 검사 로깅
         return isValid
     }

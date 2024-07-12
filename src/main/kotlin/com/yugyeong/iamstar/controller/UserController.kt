@@ -5,12 +5,12 @@ import com.yugyeong.iamstar.dto.SignUpRequest
 import com.yugyeong.iamstar.model.User
 import com.yugyeong.iamstar.service.UserService
 import com.yugyeong.iamstar.util.JwtUtil
-import com.yugyeong.iamstar.service.UserDetailsService
+import com.yugyeong.iamstar.service.CustomUserDetails
+import com.yugyeong.iamstar.service.CustomUserDetailsService
 import org.springframework.http.HttpStatus
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
-import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.web.bind.annotation.*
 import org.slf4j.LoggerFactory
@@ -20,7 +20,7 @@ class UserController(
     private val userService: UserService,
     private val authenticationManager: AuthenticationManager,
     private val jwtUtil: JwtUtil,
-    private val userDetailsService: UserDetailsService,
+    private val userDetailsService: CustomUserDetailsService,
     private val passwordEncoder: PasswordEncoder
 ) {
     private val logger = LoggerFactory.getLogger(UserController::class.java)
@@ -46,7 +46,7 @@ class UserController(
     @PostMapping("/signin")
     fun signin(@RequestBody signInRequest: SignInRequest): Map<String, String> {
         try {
-            val userDetails: UserDetails = userDetailsService.loadUserByUsername(signInRequest.email)
+            val userDetails: CustomUserDetails = userDetailsService.loadUserByUsername(signInRequest.email) as CustomUserDetails
             logger.info("로그인 시 입력한 이메일: ${signInRequest.email}")
 
             // 비밀번호 비교
@@ -61,7 +61,7 @@ class UserController(
                 authenticationManager.authenticate(authenticationToken)
                 logger.info("사용자 인증 성공: ${signInRequest.email}")
 
-                val token = jwtUtil.generateToken(userDetails.username)
+                val token = jwtUtil.generateToken(userDetails.getEmail())
                 logger.info("JWT 토큰 생성 성공: ${signInRequest.email}")
                 return mapOf("token" to token) // 토큰을 map으로 반환하여 클라이언트에서 `response.data.token`으로 접근할 수 있도록 한다.
             } else {
