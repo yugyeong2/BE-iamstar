@@ -5,7 +5,7 @@ import com.yugyeong.iamstar.dto.PostResponse
 import com.yugyeong.iamstar.model.Comment
 import com.yugyeong.iamstar.model.Post
 import com.yugyeong.iamstar.service.PostService
-import com.yugyeong.iamstar.service.UserDetails
+import com.yugyeong.iamstar.service.CustomUserDetails
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.context.SecurityContextHolder
@@ -19,7 +19,7 @@ class PostController @Autowired constructor(
 
     @PostMapping
     fun createPost(@RequestBody postRequest: PostRequest) {
-        val userDetails = SecurityContextHolder.getContext().authentication.principal as UserDetails
+        val userDetails = SecurityContextHolder.getContext().authentication.principal as CustomUserDetails
         val userId = userDetails.id
         postService.createPost(userId, postRequest)
     }
@@ -31,21 +31,21 @@ class PostController @Autowired constructor(
 
     @PostMapping("/{postId}/like")
     fun likePost(@PathVariable postId: String) {
-        val userDetails = SecurityContextHolder.getContext().authentication.principal as UserDetails
+        val userDetails = SecurityContextHolder.getContext().authentication.principal as CustomUserDetails
         val userId = userDetails.id
         postService.likePost(postId, userId)
     }
 
     @PostMapping("/{postId}/unlike")
     fun unlikePost(@PathVariable postId: String) {
-        val userDetails = SecurityContextHolder.getContext().authentication.principal as UserDetails
+        val userDetails = SecurityContextHolder.getContext().authentication.principal as CustomUserDetails
         val userId = userDetails.id
         postService.unlikePost(postId, userId)
     }
 
     @GetMapping("/{postId}/isLiked")
     fun isLiked(@PathVariable postId: String): Map<String, Boolean> {
-        val userDetails = SecurityContextHolder.getContext().authentication.principal as UserDetails
+        val userDetails = SecurityContextHolder.getContext().authentication.principal as CustomUserDetails
         val userId = userDetails.id
         val isLiked = postService.isLiked(postId, userId)
         return mapOf("isLiked" to isLiked)

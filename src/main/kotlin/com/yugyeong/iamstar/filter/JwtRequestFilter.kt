@@ -1,5 +1,6 @@
 package com.yugyeong.iamstar.filter
 
+import com.yugyeong.iamstar.service.CustomUserDetails
 import com.yugyeong.iamstar.util.JwtUtil
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest

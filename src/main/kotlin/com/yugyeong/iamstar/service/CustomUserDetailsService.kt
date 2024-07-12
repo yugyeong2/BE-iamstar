@@ -7,7 +7,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.stereotype.Service
 
 @Service
-class UserDetailsService(
+class CustomUserDetailsService(
     private val userRepository: UserRepository
 ) : UserDetailsService {
 
@@ -15,7 +15,7 @@ class UserDetailsService(
         val user = userRepository.findByEmail(email)
             ?: throw UsernameNotFoundException("User not found with email: $email")
 
-        return UserDetails(
+        return CustomUserDetails(
             id = user.id!!,
             email = user.email,
             password = user.password,

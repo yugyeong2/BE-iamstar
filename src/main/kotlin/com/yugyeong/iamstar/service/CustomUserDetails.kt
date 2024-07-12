@@ -3,7 +3,7 @@ package com.yugyeong.iamstar.service
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 
-class UserDetails(
+class CustomUserDetails(
     val id: String,
     private val email: String,
     private val password: String,
