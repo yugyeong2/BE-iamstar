@@ -19,6 +19,7 @@ class CustomUserDetailsService(
             id = user.id!!,
             emailAddress = user.email,
             password = user.password,
+            username = user.username,
             authorities = emptyList()
         )
     }
