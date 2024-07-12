@@ -61,7 +61,7 @@ class UserController(
                 authenticationManager.authenticate(authenticationToken)
                 logger.info("사용자 인증 성공: ${signInRequest.email}")
 
-                val token = jwtUtil.generateToken(userDetails.username)
+                val token = jwtUtil.generateToken(userDetails.getEmail())
                 logger.info("JWT 토큰 생성 성공: ${signInRequest.email}")
                 return mapOf("token" to token) // 토큰을 map으로 반환하여 클라이언트에서 `response.data.token`으로 접근할 수 있도록 한다.
             } else {
