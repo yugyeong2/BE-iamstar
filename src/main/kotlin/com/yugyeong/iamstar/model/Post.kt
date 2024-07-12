@@ -11,6 +11,6 @@ data class Post(
     val content: String,
     val postUrl: String,
     var likes: MutableList<String> = mutableListOf(),
-    val comments: List<Comment> = listOf(),
+    val comments: MutableList<Comment> = mutableListOf(),
     var timestamp: LocalDateTime = LocalDateTime.now()
 )
