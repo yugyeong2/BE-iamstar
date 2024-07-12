@@ -71,5 +71,10 @@ class PostService @Autowired constructor(
         val updatedComment = comment.copy(userId = user.id!!)
         val updatedPost = post.copy(comments = post.comments + updatedComment)
         return postRepository.save(updatedPost)
+        post.comments.add(comment)
+        return postRepository.save(post)
+    }
+
+
     }
 }

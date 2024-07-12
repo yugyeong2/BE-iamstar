@@ -52,7 +52,11 @@ class PostController @Autowired constructor(
     }
 
     @PostMapping("/{postId}/comment")
-    fun addComment(@PathVariable postId: String, @RequestBody comment: Comment): ResponseEntity<Post> {
+    fun addComment(@PathVariable postId: String, @RequestBody commentRequest: Map<String, String>): ResponseEntity<Post> {
+        val userDetails = SecurityContextHolder.getContext().authentication.principal as CustomUserDetails
+        val username = userDetails.username
+        val commentText = commentRequest["comment"] ?: throw IllegalArgumentException("Comment text is required")
+        val comment = Comment(username = username, comment = commentText)
         val savedPost = postService.addComment(postId, comment)
         return ResponseEntity.ok(savedPost)
     }
