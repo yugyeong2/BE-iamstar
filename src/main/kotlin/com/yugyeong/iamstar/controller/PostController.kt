@@ -60,4 +60,10 @@ class PostController @Autowired constructor(
         val savedPost = postService.addComment(postId, comment)
         return ResponseEntity.ok(savedPost)
     }
+
+    @GetMapping("/{postId}/comments")
+    fun getComments(@PathVariable postId: String): ResponseEntity<List<Comment>> {
+        val comments = postService.getComments(postId)
+        return ResponseEntity.ok(comments)
+    }
 }

@@ -67,14 +67,15 @@ class PostService @Autowired constructor(
 
     fun addComment(postId: String, comment: Comment): Post {
         val post = postRepository.findById(postId).orElseThrow { RuntimeException("Post not found") }
-        val user = userRepository.findById(comment.userId).orElseThrow { RuntimeException("User not found") }
-        val updatedComment = comment.copy(userId = user.id!!)
-        val updatedPost = post.copy(comments = post.comments + updatedComment)
-        return postRepository.save(updatedPost)
         post.comments.add(comment)
         return postRepository.save(post)
     }
 
 
+    fun getComments(postId: String): List<Comment> {
+        val post: Post = postRepository.findById(postId).orElseThrow {
+            IllegalArgumentException("Invalid post ID: $postId")
+        }
+        return post.comments
     }
 }
