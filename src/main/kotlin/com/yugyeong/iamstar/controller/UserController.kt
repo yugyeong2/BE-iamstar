@@ -28,6 +28,10 @@ class UserController(
     @PostMapping("/signup")
     @ResponseStatus(HttpStatus.CREATED)
     fun signup(@RequestBody signupRequest: SignUpRequest): Map<String, String> {
+        if (!isPasswordStrong(signupRequest.password)) {
+            throw IllegalArgumentException("비밀번호는 최소 8자 이상, 대문자, 소문자, 숫자 및 특수문자를 포함해야 합니다.")
+        }
+
         val encodedPassword = passwordEncoder.encode(signupRequest.password)
         val user = User(
             email = signupRequest.email,
@@ -75,5 +79,15 @@ class UserController(
             logger.error("로그인 중 예기치 않은 오류 발생: ${e.message}")
             throw RuntimeException("로그인 중 오류가 발생했습니다. 다시 시도해주세요.")
         }
+    }
+
+    fun isPasswordStrong(password: String): Boolean {
+        val minLength = 8
+        val hasUpperCase = password.any { it.isUpperCase() }
+        val hasLowerCase = password.any { it.isLowerCase() }
+        val hasDigit = password.any { it.isDigit() }
+        val hasSpecialChar = password.any { !it.isLetterOrDigit() }
+
+        return password.length >= minLength && hasUpperCase && hasLowerCase && hasDigit && hasSpecialChar
     }
 }
