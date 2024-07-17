@@ -28,6 +28,10 @@ class UserController(
     @PostMapping("/signup")
     @ResponseStatus(HttpStatus.CREATED)
     fun signup(@RequestBody signupRequest: SignUpRequest): Map<String, String> {
+        if (!isPasswordStrong(signupRequest.password)) {
+            throw IllegalArgumentException("비밀번호는 최소 8자 이상, 대문자, 소문자, 숫자 및 특수문자를 포함해야 합니다.")
+        }
+
         val encodedPassword = passwordEncoder.encode(signupRequest.password)
         val user = User(
             email = signupRequest.email,
