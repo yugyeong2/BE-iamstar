@@ -15,6 +15,9 @@ java {
 }
 
 configurations {
+	all {
+		exclude(group = "commons-logging", module = "commons-logging")
+	}
 	compileOnly {
 		extendsFrom(configurations.annotationProcessor.get())
 	}
