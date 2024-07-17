@@ -15,6 +15,9 @@ java {
 }
 
 configurations {
+	all {
+		exclude(group = "commons-logging", module = "commons-logging")
+	}
 	compileOnly {
 		extendsFrom(configurations.annotationProcessor.get())
 	}
@@ -36,8 +39,20 @@ dependencies {
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 	implementation("javax.xml.bind:jaxb-api:2.3.1")
 	implementation("org.glassfish.jaxb:jaxb-runtime:2.3.1")
+
 	implementation("com.amazonaws:aws-java-sdk-s3:1.12.300")
 	implementation("org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE")
+
+	implementation("dev.langchain4j:langchain4j:0.32.0")
+	implementation("com.google.code.gson:gson:2.10.1")
+	implementation("dev.langchain4j:langchain4j-open-ai:0.32.0")
+	implementation("dev.langchain4j:langchain4j-chroma:0.32.0")
+	implementation("dev.langchain4j:langchain4j-spring-boot-starter:0.32.0")
+	implementation("dev.langchain4j:langchain4j-open-ai-spring-boot-starter:0.32.0")
+	implementation("dev.langchain4j:langchain4j-easy-rag:0.32.0")
+	implementation("org.testcontainers:testcontainers")
+	implementation("org.testcontainers:chromadb")
+
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	runtimeOnly("org.postgresql:postgresql")
 	annotationProcessor("org.projectlombok:lombok")
@@ -51,7 +66,20 @@ dependencies {
 
 kotlin {
 	compilerOptions {
-		freeCompilerArgs.addAll("-Xjsr305=strict")
+		freeCompilerArgs.addAll("-Xjsr305=strict") // 어노테이션의 nullability 정보를 엄격하게 처리
+	}
+}
+
+sourceSets {
+	main {
+		java {
+			setSrcDirs(listOf("src/main/java", "src/main/kotlin"))
+		}
+	}
+	test {
+		java {
+			setSrcDirs(listOf("src/test/java", "src/test/kotlin"))
+		}
 	}
 }
 
