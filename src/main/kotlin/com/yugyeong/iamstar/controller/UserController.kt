@@ -80,4 +80,14 @@ class UserController(
             throw RuntimeException("로그인 중 오류가 발생했습니다. 다시 시도해주세요.")
         }
     }
+
+    fun isPasswordStrong(password: String): Boolean {
+        val minLength = 8
+        val hasUpperCase = password.any { it.isUpperCase() }
+        val hasLowerCase = password.any { it.isLowerCase() }
+        val hasDigit = password.any { it.isDigit() }
+        val hasSpecialChar = password.any { !it.isLetterOrDigit() }
+
+        return password.length >= minLength && hasUpperCase && hasLowerCase && hasDigit && hasSpecialChar
+    }
 }
