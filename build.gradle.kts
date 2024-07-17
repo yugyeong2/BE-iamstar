@@ -63,7 +63,20 @@ dependencies {
 
 kotlin {
 	compilerOptions {
-		freeCompilerArgs.addAll("-Xjsr305=strict")
+		freeCompilerArgs.addAll("-Xjsr305=strict") // 어노테이션의 nullability 정보를 엄격하게 처리
+	}
+}
+
+sourceSets {
+	main {
+		java {
+			setSrcDirs(listOf("src/main/java", "src/main/kotlin"))
+		}
+	}
+	test {
+		java {
+			setSrcDirs(listOf("src/test/java", "src/test/kotlin"))
+		}
 	}
 }
 
