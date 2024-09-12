@@ -41,7 +41,7 @@ public class LangChain4jConfig {
     @Bean
     public EmbeddingStore<TextSegment> embeddingStore() {
         return ChromaEmbeddingStore.builder()
-                .baseUrl("http://localhost:8000/")
+                .baseUrl("http://localhost:8000/") // Chroma 서버 URL
                 .collectionName("iamstar_chroma")
                 .build();
     }
@@ -51,8 +51,10 @@ public class LangChain4jConfig {
         return EmbeddingStoreContentRetriever.builder()
                 .embeddingStore(embeddingStore)
                 .embeddingModel(embeddingModel)
-                .maxResults(2)
-                .minScore(0.6)
+                // maxResults: 검색 결과로 반환할 최대 문서 수 (검색 엔진은 사용자 질의와 가장 관련성이 높은 n개의 문서만 반환)
+                // minScore: 검색된 문서가 반환되기 위해 필요한 최소 유사도 점수 (검색된 문서 중 유사도 점수가 n 이상인 문서들만 반환)
+                .dynamicMaxResults(query -> 3) // 질의에 따라 최대 결과 수 동적 설정
+                .dynamicMinScore(query -> 0.6) // 질의에 따라 최소 점수 동적 설정
                 .build();
     }
 
