@@ -1,14 +1,15 @@
 package com.yugyeong.iamstar.controller;
 
+import com.yugyeong.iamstar.dto.PostResponse;
 import com.yugyeong.iamstar.service.ChatService;
+import com.yugyeong.iamstar.service.PostService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
-import java.nio.file.Path;
+import java.util.List;
 
 @RestController
 @RequestMapping("/chatbot")
@@ -17,10 +18,12 @@ public class ChatController {
     private static final Logger logger = LoggerFactory.getLogger(ChatController.class);
 
     private final ChatService chatService;
+    private final PostService postService;
 
     @Autowired
-    public ChatController(ChatService chatService) {
+    public ChatController(ChatService chatService, PostService postService) {
         this.chatService = chatService;
+        this.postService = postService;
     }
 
     @PostMapping(value = "/chat", produces = "application/json")
@@ -31,15 +34,16 @@ public class ChatController {
         return response;
     }
 
-    @PostMapping("/ingest")
-    public ResponseEntity<String> ingestDocuments(@RequestParam String directory) {
-        logger.info("Received request to ingest documents from directory: {}", directory);
+    @PostMapping("/ingestPosts")
+    public ResponseEntity<String> ingestPosts() {
+        logger.info("Received request to ingest all posts");
         try {
-            chatService.ingestDocuments(Path.of(directory));
-            return ResponseEntity.ok("Documents ingested successfully");
-        } catch (IOException e) {
-            logger.error("Error ingesting documents", e);
-            return ResponseEntity.status(500).body("Error ingesting documents");
+            List<PostResponse> allPosts = postService.getAllPosts();
+            chatService.ingestAllPosts(allPosts);
+            return ResponseEntity.ok("Posts ingested successfully");
+        } catch (Exception e) {
+            logger.error("Error ingesting posts", e);
+            return ResponseEntity.status(500).body("Error ingesting posts");
         }
     }
 }

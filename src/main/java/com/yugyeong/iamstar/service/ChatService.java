@@ -1,7 +1,8 @@
 package com.yugyeong.iamstar.service;
 
-import com.yugyeong.iamstar.util.FileSystemDocumentLoader;
+import com.yugyeong.iamstar.dto.PostResponse;
 import dev.langchain4j.data.document.Document;
+import dev.langchain4j.data.document.Metadata;
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.memory.chat.MessageWindowChatMemory;
 import dev.langchain4j.model.openai.OpenAiChatModel;
@@ -16,8 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-import java.nio.file.Path;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
@@ -45,7 +45,7 @@ public class ChatService {
         this.embeddingModel = embeddingModel;
         this.retrievalAugmentor = retrievalAugmentor;
         this.embeddingStore = embeddingStore;
-        this.chatMemory = MessageWindowChatMemory.withMaxMessages(50);
+        this.chatMemory = MessageWindowChatMemory.withMaxMessages(100); // 최대로 기억하는 메시지 수
 
         this.assistant = AiServices.builder(Assistant.class)
                 .chatLanguageModel(chatModel)
@@ -61,18 +61,34 @@ public class ChatService {
         return ResponseEntity.ok(response);
     }
 
-    public void ingestDocuments(Path directory) throws IOException {
-        logger.info("Loading documents from directory: {}", directory);
-        List<Document> documents = FileSystemDocumentLoader.loadDocuments(directory);
-        logger.info("Loaded {} documents", documents.size());
+    public void ingestPost(PostResponse post) {
+        Metadata metadata = new Metadata();
+        metadata.put("postId", post.getId());
+        metadata.put("username", post.getUsername());
+        metadata.put("fullName", post.getFullName());
+        metadata.put("profileUrl", post.getProfileUrl());
+        metadata.put("postUrl", post.getPostUrl());
+        metadata.put("likes", String.valueOf(post.getLikes()));
+        metadata.put("comments", post.getComments().toString());
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        metadata.put("timestamp", post.getTimestamp().format(formatter)); // LocalDateTime을 문자열로 변환
+
+        Document document = new Document(post.getContent(), metadata);
 
         EmbeddingStoreIngestor ingestor = EmbeddingStoreIngestor.builder()
                 .embeddingModel(embeddingModel)
                 .embeddingStore(embeddingStore)
                 .build();
 
-        logger.info("Starting document ingestion");
-        ingestor.ingest(documents);
-        logger.info("Documents ingested successfully");
+        logger.info("Starting ingestion for post: {}", post.getId());
+        ingestor.ingest(List.of(document));
+        logger.info("Ingested post: {}", post.getId());
+    }
+
+    public void ingestAllPosts(List<PostResponse> posts) {
+        for (PostResponse post : posts) {
+            ingestPost(post);
+        }
     }
 }

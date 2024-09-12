@@ -13,7 +13,8 @@ import java.time.LocalDateTime
 @Service
 class PostService @Autowired constructor(
     private val postRepository: PostRepository,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val chatService: ChatService
 ) {
 
     fun createPost(userId: String, postRequest: PostRequest): Post {
@@ -24,7 +25,21 @@ class PostService @Autowired constructor(
             timestamp = LocalDateTime.now()
         )
 
-        return postRepository.save(post)
+        val savedPost = postRepository.save(post)
+        val user = userRepository.findById(userId).orElseThrow { RuntimeException("User not found") }
+        val postResponse = PostResponse(
+            id = savedPost.id!!,
+            username = user.username,
+            fullName = user.fullName,
+            profileUrl = user.profileUrl,
+            content = savedPost.content,
+            postUrl = savedPost.postUrl,
+            likes = savedPost.likes.size,
+            comments = savedPost.comments,
+            timestamp = savedPost.timestamp
+        )
+        chatService.ingestPost(postResponse) // 단일 게시글을 Chroma에 삽입
+        return savedPost
     }
 
     fun getAllPosts(): List<PostResponse> {
@@ -70,7 +85,6 @@ class PostService @Autowired constructor(
         post.comments.add(comment)
         return postRepository.save(post)
     }
-
 
     fun getComments(postId: String): List<Comment> {
         val post: Post = postRepository.findById(postId).orElseThrow {
